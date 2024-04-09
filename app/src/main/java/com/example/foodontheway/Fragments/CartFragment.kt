@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodontheway.PayoutActivity
 import com.example.foodontheway.adapter.CartAdapter
@@ -48,8 +51,11 @@ class CartFragment : Fragment() {
         retrieveCartItems()
         binding.proceedButton.setOnClickListener {
             //get order Item details
-            getOrderItemDetails()
-
+            if (binding.cartRecyclerView.isNotEmpty()) {
+                getOrderItemDetails()
+            }else{
+                Toast.makeText(requireContext(), "Add Your Favourite food to your Cart", Toast.LENGTH_SHORT).show()
+            }
         }
         return binding.root
     }

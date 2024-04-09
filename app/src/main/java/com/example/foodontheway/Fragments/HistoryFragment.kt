@@ -6,9 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.foodontheway.adapter.BuyAgainAdapter
+import com.example.foodontheway.adapter.CartAdapter
 import com.example.foodontheway.databinding.FragmentHistoryBinding
 import com.example.foodontheway.model.OrderDetails
 import com.google.firebase.auth.FirebaseAuth
@@ -91,11 +93,14 @@ class HistoryFragment : Fragment() {
                 val image = recentOrderItem.FoodImages?.firstOrNull()?:""
                 val uri = Uri.parse(image)
                 Glide.with(requireContext()).load(uri).into(buyAgainFoodImage)
-//                isReceivedButton.setOnClickListener{
-//
-//                    val orderRef=database.reference.child("user").child("OrderDetails")
-//                        .child(recentOrderItem.itemPushKey!!).updateChildren("orderAccepted",true)
-//                }
+                isRecievedButton.setOnClickListener{
+                    val updates = HashMap<String, Any>()
+                    updates["orderAccepted"] = true
+                    updates["paymentReceived"] = true
+                    val orderRef=database.reference.child("user").child(userId).child("OrderDetails")
+                        .child(recentOrderItem.itemPushKey!!).updateChildren(updates)
+                    Toast.makeText(requireContext(), "We Hope you like the food and Delivery Experience", Toast.LENGTH_SHORT).show()
+                }
 
             }
         }
@@ -107,9 +112,9 @@ class HistoryFragment : Fragment() {
         val foodImages = mutableListOf<String>()
 
         for (orderDetails in listOfOrderItems) {
-            foodNames.addAll(orderDetails.FoodNames as Collection<String>)
-            foodPrices.addAll(orderDetails.FoodPrices as Collection<String>)
-            foodImages.addAll(orderDetails.FoodImages as Collection<String>)
+            orderDetails.FoodNames?.let { foodNames.addAll(it) }
+            orderDetails.FoodPrices?.let { foodPrices.addAll(it) }
+            orderDetails.FoodImages?.let { foodImages.addAll(it) }
         }
 
         setAdapter(foodNames, foodPrices, foodImages)
