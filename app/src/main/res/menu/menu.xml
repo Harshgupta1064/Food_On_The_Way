@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:title="Home"
+        android:icon="@drawable/icon_home_active"/>
+    <item android:title="Cart"
+        android:id="@+id/cartFragment"
+        android:icon="@drawable/notification_cart"/>
+    <item android:title="Search"
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/search_refraction"/>
+    <item android:title="History"
+        android:id="@+id/historyFragment"
+        android:icon="@drawable/list"/>
+    <item android:title="Profile"
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/user_01"/>
+</menu>
