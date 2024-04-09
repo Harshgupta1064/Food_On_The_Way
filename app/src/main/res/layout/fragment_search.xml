@@ -18,13 +18,10 @@
         android:background="@drawable/search_shape"
         android:queryHint="What do you Want to Order"
         android:searchIcon="@drawable/search_refraction"
-        app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:queryBackground="@android:color/transparent"
-        app:searchHintIcon="@drawable/search_refraction" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
