@@ -30,8 +30,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
                 app:cardCornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -47,26 +47,36 @@
                 android:id="@+id/itemName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:fontFamily="@font/shantellsans_medium"
                 android:text="TextView"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@+id/itemPrice"
                 app:layout_constraintStart_toEndOf="@+id/itemImageCard"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/itemImageCard" />
+
+            <TextView
+                android:id="@+id/oneItemPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/shantellsans_medium"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="@+id/itemName"
+                app:layout_constraintTop_toBottomOf="@+id/itemName" />
 
             <TextView
                 android:id="@+id/itemPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="10dp"
                 android:fontFamily="@font/shantellsans_medium"
                 android:text="TextView"
                 android:textColor="@color/green"
+                android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/itemImageCard"
-                app:layout_constraintTop_toBottomOf="@+id/itemName" />
+                app:layout_constraintStart_toEndOf="@+id/itemImageCard" />
 
             <TextView
                 android:id="@+id/cartItemQuantity"
@@ -114,6 +124,7 @@
                 app:layout_constraintStart_toStartOf="@+id/cartItemQuantity"
                 app:layout_constraintTop_toBottomOf="@+id/cartItemQuantity"
                 app:layout_constraintVertical_bias="0.5" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

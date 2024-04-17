@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isEmpty
 import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodontheway.PayoutActivity
@@ -20,7 +19,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 
 class CartFragment : Fragment() {
 
@@ -31,11 +29,14 @@ class CartFragment : Fragment() {
     private lateinit var foodPrices: MutableList<String>
     private lateinit var foodDescriptions: MutableList<String>
     private lateinit var foodIngredients: MutableList<String>
+    private lateinit var foodItemIDs: MutableList<String>
     private lateinit var foodImageUri: MutableList<String>
     private lateinit var quantities: MutableList<Int>
     private lateinit var adapter: CartAdapter
     private lateinit var userId: String
     private lateinit var cartItemsToAdd: MutableList<CartItem?>
+    private lateinit var totalAmount: String
+    private lateinit var orderIdRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,26 +50,66 @@ class CartFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         retrieveCartItems()
+
+
+        orderIdRef = database.reference.child("user").child(userId).child("cartItems")
+        orderIdRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Calculate total amount
+                val totalAmount = calculateTotalAmount(snapshot)
+
+                // Update the "Proceed" button text with the new total amount
+                updateProceedButton(totalAmount)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle onCancelled event if needed
+            }
+        })
+
+
+
         binding.proceedButton.setOnClickListener {
-            //get order Item details
             if (binding.cartRecyclerView.isNotEmpty()) {
                 getOrderItemDetails()
-            }else{
-                Toast.makeText(requireContext(), "Add Your Favourite food to your Cart", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Add Your Favourite food to your Cart",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         return binding.root
     }
 
+    private fun calculateTotalAmount(snapshot: DataSnapshot): Int {
+        var totalAmount = 0
+        for (cartSnapshot in snapshot.children) {
+            val foodPrice =
+                cartSnapshot.child("foodPrice").getValue(String::class.java)?.toIntOrNull() ?: 0
+            val foodQuantity = cartSnapshot.child("foodQuantity").getValue(Int::class.java) ?: 0
+            totalAmount += foodPrice * foodQuantity
+        }
+        return totalAmount
+    }
+
+    private fun updateProceedButton(totalAmount: Int) {
+        // Update the text of the proceedButton to display the total amount
+        binding.proceedButton.text = "Place Order Rs. $totalAmount"
+    }
+
 
     private fun getOrderItemDetails() {
-        val orderIdRef = database.reference.child("user").child(userId).child("cartItems")
+        orderIdRef = database.reference.child("user").child(userId).child("cartItems")
         val foodNames = mutableListOf<String>()
         val foodPrices = mutableListOf<String>()
         val foodImages = mutableListOf<String>()
         val foodDescriptions = mutableListOf<String>()
         val foodIngredients = mutableListOf<String>()
-        val foodQuantities= mutableListOf<Int>()
+        val foodQuantities = mutableListOf<Int>()
+        val foodItemIDs = mutableListOf<String>()
+
 
         orderIdRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -80,6 +121,7 @@ class CartFragment : Fragment() {
                     cartItems?.foodImage?.let { foodImages.add(it) }
                     cartItems?.foodIngredient?.let { foodIngredients.add(it) }
                     cartItems?.foodQuantity?.let { foodQuantities.add(it) }
+                    cartItems?.foodItemID?.let { foodItemIDs.add(it) }
 
                 }
                 orderNow(
@@ -88,7 +130,8 @@ class CartFragment : Fragment() {
                     foodImages,
                     foodDescriptions,
                     foodIngredients,
-                    foodQuantities
+                    foodQuantities,
+                    foodItemIDs
                 )
             }
 
@@ -104,7 +147,8 @@ class CartFragment : Fragment() {
         foodImages: MutableList<String>,
         foodDescriptions: MutableList<String>,
         foodIngredients: MutableList<String>,
-        foodQuantities: MutableList<Int>
+        foodQuantities: MutableList<Int>,
+        foodItemIDs: MutableList<String>
     ) {
         if (isAdded && context != null) {
             val intent = Intent(requireContext(), PayoutActivity::class.java)
@@ -113,6 +157,7 @@ class CartFragment : Fragment() {
             intent.putExtra("orderFoodDescriptions", foodDescriptions as ArrayList<String>)
             intent.putExtra("orderFoodIngredients", foodIngredients as ArrayList<String>)
             intent.putExtra("orderFoodImages", foodImages as ArrayList<String>)
+            intent.putExtra("foodItemIDs", foodItemIDs as ArrayList<String>)
             intent.putExtra("orderFoodQuantities", foodQuantities as ArrayList<Int>)
             startActivity(intent)
         }
@@ -127,6 +172,7 @@ class CartFragment : Fragment() {
         foodPrices = mutableListOf()
         foodDescriptions = mutableListOf()
         foodIngredients = mutableListOf()
+        foodItemIDs = mutableListOf()
         foodImageUri = mutableListOf()
         quantities = mutableListOf()
         cartItemsToAdd = mutableListOf()
@@ -140,14 +186,18 @@ class CartFragment : Fragment() {
                     cartItem?.foodImage?.let { foodImageUri.add(it) }
                     cartItem?.foodIngredient?.let { foodIngredients.add(it) }
                     cartItem?.foodQuantity?.let { quantities.add(it) }
+                    cartItem?.foodItemID?.let { foodItemIDs.add(it) }
                     cartItemsToAdd.add(cartItem)
                 }
+
                 setAdapter()
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         })
     }
+
 
     private fun setAdapter() {
         adapter = CartAdapter(cartItemsToAdd, requireContext())

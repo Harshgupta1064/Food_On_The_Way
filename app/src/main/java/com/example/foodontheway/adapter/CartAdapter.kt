@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.foodontheway.R
 import com.example.foodontheway.databinding.CartItemBinding
 import com.example.foodontheway.model.CartItem
 import com.google.firebase.auth.FirebaseAuth
@@ -37,7 +38,7 @@ class CartAdapter(
     companion object {
 
         private var itemQuantities: IntArray = intArrayOf()
-        private lateinit var cartItemRef: DatabaseReference
+        lateinit var cartItemRef: DatabaseReference
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
@@ -66,24 +67,33 @@ class CartAdapter(
     inner class CartViewHolder(private val binding: CartItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) {
-            val cartItem = cartItems[position]
+            val cartItem = cartItems[position] as CartItem
             binding.apply {
 
 
 
-                val quantity = itemQuantities[position]
-                itemName.text = cartItem?.foodName
-                itemPrice.text = cartItem?.foodPrice
-                val uri = Uri.parse(cartItem?.foodImage)
+//                val quantity = itemQuantities[position]
+                itemName.text = cartItem.foodName
+                val price = cartItem.foodPrice?.toIntOrNull() ?: 0
+                val quantity = cartItem.foodQuantity ?: 0
+                val totalPrice = price * quantity
+                oneItemPrice.text = price.toString()
+                itemPrice.text = totalPrice.toString()
+                val uri = Uri.parse(cartItem.foodImage)
                 Glide.with(requireContext).load(uri).into(itemImage)
 
 
 
                 plusButton.setOnClickListener() {
                     increaseQuantity(position)
+                    notifyDataSetChanged()
+
+
                 }
                 minusButton.setOnClickListener() {
                     decreaseQuantity(position)
+                    notifyDataSetChanged()
+
                 }
                 deleteButton.setOnClickListener() {
                     val itemPosition = adapterPosition
@@ -122,6 +132,8 @@ class CartAdapter(
                         val updates = HashMap<String, Any>()
                         updates["foodQuantity"] = itemQuantities[position]
                         cartItemRef.child(uniqueKey).updateChildren(updates)
+                        updates["foodPrices"] =
+                            cartItems[position]?.foodPrice?.toInt()!! * itemQuantities[position]
                     }
                 }
 
@@ -137,6 +149,9 @@ class CartAdapter(
                     if (uniqueKey != null) {
                         val updates = HashMap<String, Any>()
                         updates["foodQuantity"] = itemQuantities[position]
+                            updates["foodPrices"] =
+                                cartItems[position]?.foodPrice?.toInt()!! * itemQuantities[position]
+
                         cartItemRef.child(uniqueKey).updateChildren(updates)
                     }
                 }

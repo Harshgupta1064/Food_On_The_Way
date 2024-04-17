@@ -34,21 +34,25 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Popular"
+        android:textSize="22sp"
+        android:fontFamily="@font/shantellsans_medium"
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
     <TextView
         android:id="@+id/ViewMenu"
-        android:layout_width="80dp"
-        android:layout_height="25dp"
+        android:layout_width="120dp"
+        android:layout_height="35dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/textviewshape"
         android:elevation="5dp"
+        android:fontFamily="@font/shantellsans_medium"
         android:gravity="center"
-        android:textColor="@color/black"
         android:text="View Menu"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 

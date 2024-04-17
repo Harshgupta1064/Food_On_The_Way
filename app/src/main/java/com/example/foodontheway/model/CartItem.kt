@@ -6,5 +6,6 @@ data class CartItem(
     var foodDescription:String?=null,
     var foodImage:String?=null,
     var foodQuantity:Int?=null,
-    var foodIngredient:String?=null
+    var foodIngredient:String?=null,
+    var foodItemID:String?=null,
 )
