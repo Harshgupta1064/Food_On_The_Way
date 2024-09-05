@@ -23,7 +23,6 @@
     <li><strong>Retrofit:</strong> For API calls (for menus, restaurant listings, etc.)</li>
     <li><strong>Glide:</strong> For image loading (restaurant logos, menu item images)</li>
     <li><strong>Firebase SDK:</strong> Authentication, real-time database, and cloud storage</li>
-    <li><strong>Google Maps API:</strong> For displaying restaurant locations and tracking deliveries</li>
 </ul>
 
 <h2>Setup and Installation</h2>
